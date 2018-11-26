@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { UsersModule } from './users/users.module';
+import { TrailsModule } from './trails/trails.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UsersModule } from './users/users.module';
       },
     }),
     UsersModule,
+    TrailsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
