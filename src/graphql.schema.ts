@@ -14,6 +14,8 @@ export abstract class IMutation {
 export abstract class IQuery {
     abstract rides(): Ride[] | Promise<Ride[]>;
 
+    abstract ride(id: number): Ride | Promise<Ride>;
+
     abstract trails(location: string): Trail[] | Promise<Trail[]>;
 
     abstract users(): User[] | Promise<User[]>;

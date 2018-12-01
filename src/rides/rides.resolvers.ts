@@ -13,6 +13,11 @@ export class RidesResolvers {
     return Ride.find();
   }
 
+  @Query('ride')
+  async getRide(@Args('id') id: number): Promise<Ride> {
+    return Ride.findOne(id);
+  }
+
   @ResolveProperty('trail')
   // TODO: return type?
   async getTrail(@Parent() ride) {

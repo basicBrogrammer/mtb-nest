@@ -1,6 +1,7 @@
 scalar Date
 type Query {
   rides: [Ride!]
+  ride(id: Int!): Ride
 }
 
 type Mutation {
