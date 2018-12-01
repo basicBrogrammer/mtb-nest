@@ -1,0 +1,22 @@
+scalar Date
+type Query {
+  rides: [Ride!]
+}
+
+type Mutation {
+  saveRide(id: String, trailId: String!, date: Date!, time: Date!): Ride!
+}
+
+type Ride {
+  id: Int!
+  trailId: String!
+  location: String!
+  date: Date!
+  time: Date!
+
+  user: User!
+  trail: Trail!
+
+  createdAt: Date!
+  updatedAt: Date!
+}

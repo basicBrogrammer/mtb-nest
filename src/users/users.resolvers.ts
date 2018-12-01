@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { Mutation, Query, Resolver, Args } from '@nestjs/graphql';
+import { Mutation, Query, Resolver, Args, Context } from '@nestjs/graphql';
 import { User } from './user.entity';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/gql-authguard.decorator';
@@ -12,6 +12,7 @@ export class UsersResolvers {
   @Query('users')
   @UseGuards(GqlAuthGuard)
   async getUsers() {
+    // what type should req be ???
     return User.find();
   }
 

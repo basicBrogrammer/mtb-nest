@@ -8,6 +8,8 @@ import { UsersModule } from './users/users.module';
 import { TrailsModule } from './trails/trails.module';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
+import { RidesModule } from './rides/rides.module';
+import { DateScalar } from './common/scalars/date.scalar';
 
 @Module({
   imports: [
@@ -18,11 +20,13 @@ import { AuthModule } from './auth/auth.module';
       definitions: {
         path: join(process.cwd(), 'src/graphql.schema.ts'),
         outputAs: 'class'
-      }
+      },
+      resolvers: { Date: DateScalar }
     }),
     UsersModule,
     TrailsModule,
-    AuthModule
+    AuthModule,
+    RidesModule
   ],
   controllers: [AppController],
   providers: [AppService, AuthService]
