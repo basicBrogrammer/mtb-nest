@@ -10,6 +10,8 @@ import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { RidesModule } from './rides/rides.module';
 import { DateScalar } from './common/scalars/date.scalar';
+import { RedisModule } from './redis/redis.module';
+import { RedisService } from './redis/redis.service';
 
 @Module({
   imports: [
@@ -26,9 +28,10 @@ import { DateScalar } from './common/scalars/date.scalar';
     UsersModule,
     TrailsModule,
     AuthModule,
-    RidesModule
+    RidesModule,
+    RedisModule
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService]
+  providers: [AppService, AuthService, RedisService]
 })
 export class AppModule {}

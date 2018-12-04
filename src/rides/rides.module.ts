@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { RidesResolvers } from './rides.resolvers';
-import { TrailsService } from 'src/trails/trails.service';
 import { RidesService } from './rides.service';
+import { TrailsModule } from 'src/trails/trails.module';
 
 @Module({
-  providers: [RidesResolvers, TrailsService, RidesService]
+  imports: [TrailsModule],
+  providers: [RidesResolvers, RidesService]
 })
 export class RidesModule {}

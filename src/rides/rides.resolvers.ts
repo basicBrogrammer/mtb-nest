@@ -21,7 +21,6 @@ export class RidesResolvers {
   @ResolveProperty('trail')
   // TODO: return type?
   async getTrail(@Parent() ride) {
-    // TODO: cache
     const { trailId } = ride;
     return await this.trailService.getById(trailId);
   }
