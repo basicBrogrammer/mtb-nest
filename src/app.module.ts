@@ -12,6 +12,7 @@ import { RidesModule } from './rides/rides.module';
 import { DateScalar } from './common/scalars/date.scalar';
 import { RedisModule } from './redis/redis.module';
 import { RedisService } from './redis/redis.service';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { RedisService } from './redis/redis.service';
     TrailsModule,
     AuthModule,
     RidesModule,
-    RedisModule
+    RedisModule,
+    CommentsModule
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, RedisService]

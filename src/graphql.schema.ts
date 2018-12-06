@@ -3,7 +3,19 @@ export class AuthPayload {
     user: User;
 }
 
+export class Comment {
+    id: string;
+    body: string;
+    user: User;
+    ride: Ride;
+    createdAt: Date;
+}
+
 export abstract class IMutation {
+    abstract saveComment(rideId: number, body: string): Comment | Promise<Comment>;
+
+    abstract deleteComment(id: number): boolean | Promise<boolean>;
+
     abstract saveRide(id?: string, trailId: string, date: Date, time: Date): Ride | Promise<Ride>;
 
     abstract signup(email: string, password: string, name: string): AuthPayload | Promise<AuthPayload>;
@@ -12,6 +24,8 @@ export abstract class IMutation {
 }
 
 export abstract class IQuery {
+    abstract comments(rideId: number): Comment[] | Promise<Comment[]>;
+
     abstract rides(): Ride[] | Promise<Ride[]>;
 
     abstract ride(id: number): Ride | Promise<Ride>;

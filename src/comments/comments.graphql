@@ -1,0 +1,18 @@
+scalar Date
+
+type Comment {
+  id: ID!
+  body: String!
+  user: User!
+  ride: Ride!
+  createdAt: Date!
+}
+
+type Query {
+  comments(rideId: Int!): [Comment!]!
+}
+
+type Mutation {
+  saveComment(rideId: Int!, body: String!): Comment!
+  deleteComment(id: Int!): Boolean!
+}

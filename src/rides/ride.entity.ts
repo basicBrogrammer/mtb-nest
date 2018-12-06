@@ -6,9 +6,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
-  BeforeInsert
+  BeforeInsert,
+  OneToMany
 } from 'typeorm';
 import { User } from 'src/users/user.entity';
+import { Comment } from 'src/comments/comment.entity';
 
 @Entity()
 // @Index(['latitude', 'longitude'])
@@ -31,6 +33,9 @@ export class Ride extends BaseEntity {
 
   @ManyToOne((type) => User, (user) => user.rides, { eager: true })
   user: User;
+
+  @OneToMany((type) => Comment, (comment) => comment.ride)
+  comments: Comment[];
 
   @CreateDateColumn()
   createdAt: Date;

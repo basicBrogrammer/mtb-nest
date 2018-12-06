@@ -10,6 +10,7 @@ export class RidesResolvers {
   constructor(private ridesService: RidesService, private trailService: TrailsService) {}
   @Query('rides')
   async getRides(): Promise<Ride[]> {
+    console.log('Get rides is firing......');
     return Ride.find();
   }
 
@@ -35,7 +36,7 @@ export class RidesResolvers {
     @Args('time') time: Date
   ): Promise<Ride> {
     return id
-      ? Ride.findOne(id)
+      ? Ride.findOne(id) // TODO: handle update case
       : this.ridesService.createRide({
           trailId,
           date: new Date(date),
