@@ -16,6 +16,12 @@ export abstract class IMutation {
 
     abstract deleteComment(id: number): boolean | Promise<boolean>;
 
+    abstract requestParticipation(rideId: number): boolean | Promise<boolean>;
+
+    abstract acceptParticipant(id: number): boolean | Promise<boolean>;
+
+    abstract rejectParticipant(id: number): boolean | Promise<boolean>;
+
     abstract saveRide(id?: number, trailId: string, date: Date, time: Date): Ride | Promise<Ride>;
 
     abstract deleteRide(id?: number): boolean | Promise<boolean>;
@@ -25,8 +31,17 @@ export abstract class IMutation {
     abstract login(email: string, password: string): AuthPayload | Promise<AuthPayload>;
 }
 
+export class Participation {
+    id: string;
+    ride: Ride;
+    user: User;
+    status: string;
+}
+
 export abstract class IQuery {
     abstract comments(rideId: number): Comment[] | Promise<Comment[]>;
+
+    abstract participations(): Participation[] | Promise<Participation[]>;
 
     abstract rides(): Ride[] | Promise<Ride[]>;
 

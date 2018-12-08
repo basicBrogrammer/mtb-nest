@@ -13,6 +13,7 @@ import { DateScalar } from './common/scalars/date.scalar';
 import { RedisModule } from './redis/redis.module';
 import { RedisService } from './redis/redis.service';
 import { CommentsModule } from './comments/comments.module';
+import { ParticipationModule } from './participation/participation.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { CommentsModule } from './comments/comments.module';
     AuthModule,
     RidesModule,
     RedisModule,
-    CommentsModule
+    CommentsModule,
+    ParticipationModule
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, RedisService]

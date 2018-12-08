@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Ride } from 'src/rides/ride.entity';
 import { Comment } from 'src/comments/comment.entity';
+import { Participation } from 'src/participation/participation.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -29,6 +30,9 @@ export class User extends BaseEntity {
 
   @OneToMany((type) => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @OneToMany((type) => Participation, (participation) => participation.ride)
+  participations: Participation[];
 
   @CreateDateColumn()
   createdAt: Date;

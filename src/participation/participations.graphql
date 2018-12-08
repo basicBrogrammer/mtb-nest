@@ -1,0 +1,15 @@
+type Participation {
+  id: ID!
+  ride: Ride!
+  user: User!
+  status: String!
+}
+
+type Query {
+  participations: [Participation]!
+}
+type Mutation {
+  requestParticipation(rideId: Int!): Boolean!
+  acceptParticipant(id: Int!): Boolean!
+  rejectParticipant(id: Int!): Boolean!
+}

@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Comment } from 'src/comments/comment.entity';
+import { Participation } from 'src/participation/participation.entity';
 
 @Entity()
 // @Index(['latitude', 'longitude'])
@@ -36,6 +37,9 @@ export class Ride extends BaseEntity {
 
   @OneToMany((type) => Comment, (comment) => comment.ride)
   comments: Comment[];
+
+  @OneToMany((type) => Participation, (participation) => participation.ride)
+  participations: Participation[];
 
   @CreateDateColumn()
   createdAt: Date;
