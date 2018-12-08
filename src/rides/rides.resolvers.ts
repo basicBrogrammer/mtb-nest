@@ -26,7 +26,7 @@ export class RidesResolvers {
     return await this.trailService.getById(trailId);
   }
 
-  @Mutation()
+  @Mutation('saveRide')
   @UseGuards(GqlAuthGuard)
   async saveRide(
     @Context('req') req: any,
@@ -43,5 +43,17 @@ export class RidesResolvers {
     };
 
     return id ? this.ridesService.updateRide(id, rideData) : this.ridesService.createRide(rideData);
+  }
+
+  @Mutation('deleteRide')
+  @UseGuards(GqlAuthGuard)
+  async deleteRide(@Context('req') req: any, @Args('id') id: number) {
+    try {
+      const ride = await Ride.findOne({ where: { id, userId: req.user.id } });
+      ride.remove();
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

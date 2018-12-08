@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { TrailsService } from 'src/trails/trails.service';
-import { User } from 'src/users/user.entity';
 import { Ride } from './ride.entity';
 import { CreateRide } from './dto/create-rides.dto';
 
@@ -20,11 +19,13 @@ export class RidesService {
 
   async updateRide(id: number, rideData: CreateRide): Promise<Ride> {
     const ride = await Ride.findOne(id);
+    const trail = await this.trailsService.getById(rideData.trailId);
+
     ride.trailId = rideData.trailId;
     ride.date = rideData.date;
     ride.time = rideData.time;
-    const trail = await this.trailsService.getById(rideData.trailId);
     ride.location = trail.location;
+
     return ride.save();
   }
 }

@@ -6,6 +6,7 @@ type Query {
 
 type Mutation {
   saveRide(id: Int, trailId: String!, date: Date!, time: Date!): Ride!
+  deleteRide(id: Int): Boolean!
 }
 
 type Ride {
