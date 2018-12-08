@@ -16,7 +16,7 @@ export abstract class IMutation {
 
     abstract deleteComment(id: number): boolean | Promise<boolean>;
 
-    abstract saveRide(id?: string, trailId: string, date: Date, time: Date): Ride | Promise<Ride>;
+    abstract saveRide(id?: number, trailId: string, date: Date, time: Date): Ride | Promise<Ride>;
 
     abstract signup(email: string, password: string, name: string): AuthPayload | Promise<AuthPayload>;
 

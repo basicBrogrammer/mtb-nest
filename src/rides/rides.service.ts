@@ -17,4 +17,14 @@ export class RidesService {
     ride.location = trail.location;
     return ride.save();
   }
+
+  async updateRide(id: number, rideData: CreateRide): Promise<Ride> {
+    const ride = await Ride.findOne(id);
+    ride.trailId = rideData.trailId;
+    ride.date = rideData.date;
+    ride.time = rideData.time;
+    const trail = await this.trailsService.getById(rideData.trailId);
+    ride.location = trail.location;
+    return ride.save();
+  }
 }

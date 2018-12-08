@@ -30,18 +30,18 @@ export class RidesResolvers {
   @UseGuards(GqlAuthGuard)
   async saveRide(
     @Context('req') req: any,
-    @Args('id') id: string,
+    @Args('id') id: number,
     @Args('trailId') trailId: string,
     @Args('date') date: Date,
     @Args('time') time: Date
   ): Promise<Ride> {
-    return id
-      ? Ride.findOne(id) // TODO: handle update case
-      : this.ridesService.createRide({
-          trailId,
-          date: new Date(date),
-          time: new Date(time),
-          user: req.user
-        });
+    const rideData = {
+      trailId,
+      date: new Date(date),
+      time: new Date(time),
+      user: req.user
+    };
+
+    return id ? this.ridesService.updateRide(id, rideData) : this.ridesService.createRide(rideData);
   }
 }
