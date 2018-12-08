@@ -24,7 +24,8 @@ import { CommentsModule } from './comments/comments.module';
         path: join(process.cwd(), 'src/graphql.schema.ts'),
         outputAs: 'class'
       },
-      resolvers: { Date: DateScalar }
+      resolvers: { Date: DateScalar },
+      installSubscriptionHandlers: true
     }),
     UsersModule,
     TrailsModule,

@@ -49,6 +49,10 @@ export class Ride {
     updatedAt: Date;
 }
 
+export abstract class ISubscription {
+    abstract commentAdded(rideId: number): Comment | Promise<Comment>;
+}
+
 export class Trail {
     id: string;
     name: string;

@@ -16,3 +16,7 @@ type Mutation {
   saveComment(rideId: Int!, body: String!): Comment!
   deleteComment(id: Int!): Boolean!
 }
+
+type Subscription {
+  commentAdded(rideId: Int!): Comment
+}
