@@ -8,15 +8,27 @@ import { TrailsService } from 'src/trails/trails.service';
 @Resolver('Ride')
 export class RidesResolvers {
   constructor(private ridesService: RidesService, private trailService: TrailsService) {}
+
   @Query('rides')
   async getRides(): Promise<Ride[]> {
-    console.log('Get rides is firing......');
     return Ride.find();
   }
 
   @Query('ride')
   async getRide(@Args('id') id: number): Promise<Ride> {
     return Ride.findOne(id);
+  }
+
+  @Query('myRides')
+  @UseGuards(GqlAuthGuard)
+  async myRides(@Context('req') req: any): Promise<Ride[]> {
+    return this.ridesService.getRidesForUser(req.user);
+  }
+
+  @Query('myParticipatingRides')
+  @UseGuards(GqlAuthGuard)
+  async myParticipatingRides(@Context('req') req: any): Promise<Ride[]> {
+    return this.ridesService.getParticipatingRidesForUser(req.user);
   }
 
   @ResolveProperty('trail')

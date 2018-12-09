@@ -26,13 +26,13 @@ export class User extends BaseEntity {
   name: string;
 
   @OneToMany((type) => Ride, (ride) => ride.user)
-  rides: Ride[];
+  rides: Promise<Ride[]>;
 
   @OneToMany((type) => Comment, (comment) => comment.user)
   comments: Comment[];
 
   @OneToMany((type) => Participation, (participation) => participation.ride)
-  participations: Participation[];
+  participations: Promise<Participation[]>;
 
   @CreateDateColumn()
   createdAt: Date;
