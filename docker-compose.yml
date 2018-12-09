@@ -1,0 +1,45 @@
+version: '3.1'
+
+services: # containers
+  nest: # internal dns name
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
+    environment:
+      REDIS_HOST: redis
+      APP_SECRET: ${APP_SECRET}
+      MTB_PROJECT_KEY: ${MTB_PROJECT_KEY}
+      GOOGLE_MAPS_KEY: ${GOOGLE_MAPS_KEY}
+    command: 'yarn start:dev'
+    volumes:
+      - .:/opt/app
+      # bind-mounting these two files in will let you add packages during development without rebuilding
+      # for example, to add bower to your app while developing, just install it inside the container
+      # and then nodemon will restart. Your changes will last until you "docker-compose down" and will
+      # be saved on host for next build
+      # docker-compose exec node npm install --save bower
+      - ./package.json:/opt/package.json
+      - ./yarn.lock:/opt/yarn.lock
+      # this is a workaround to prevent host node_modules from accidently getting mounted in container
+      # in case you want to use node/npm both outside container for test/lint etc. and also inside container
+      # this will overwrite the default node_modules dir in container so it won't conflict with our
+      # /opt/node_modules location. Thanks to PR from @brnluiz
+      - notused:/opt/app/node_modules
+    ports:
+      - 4000:4000
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:5
+
+  postgres:
+    image: postgres:11.1
+    environment:
+      POSTGRES_PASSWORD: development-password
+      POSTGRES_DB: mtb-nest
+
+volumes:
+  notused:

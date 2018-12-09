@@ -9,7 +9,7 @@ export class RedisService {
   public redisClient: any;
   private getAsync: any; // Promisify redis.get
   constructor() {
-    this.redisClient = redis.createClient();
+    this.redisClient = redis.createClient({ host: process.env.REDIS_HOST });
     // listen for redis connection error event
     this.redisClient.on('error', (error) => {
       // handle error here
