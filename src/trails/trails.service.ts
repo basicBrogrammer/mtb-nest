@@ -11,6 +11,7 @@ const mtbProjectApiKey = process.env.MTB_PROJECT_KEY;
 @Injectable()
 export class TrailsService {
   constructor(private redis: RedisService) {}
+
   async getByLocation(location: string) {
     const response = await this.redis.wrap(
       `geocode-${location.toLowerCase().replace(/\W/g, '-')}`,

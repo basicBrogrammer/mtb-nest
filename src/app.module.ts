@@ -14,6 +14,7 @@ import { RedisModule } from './redis/redis.module';
 import { RedisService } from './redis/redis.service';
 import { CommentsModule } from './comments/comments.module';
 import { ParticipationModule } from './participation/participation.module';
+import { PubsubModule } from './pubsub/pubsub.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { ParticipationModule } from './participation/participation.module';
     RidesModule,
     RedisModule,
     CommentsModule,
-    ParticipationModule
+    ParticipationModule,
+    PubsubModule
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, RedisService]

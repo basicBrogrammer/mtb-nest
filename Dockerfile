@@ -1,12 +1,12 @@
 # pulled from https://github.com/BretFisher/node-docker-good-defaults
-FROM node:10.14-alpine
+FROM node:10.14
 
 # set our node environment, either development or production
 # defaults to production, compose overrides this to development on build and run
 ARG NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
 
-# default to port 3000 for node, and 9229 and 9230 (tests) for debug
+# default to port 4000 for node, and 9229 and 9230 (tests) for debug
 ARG PORT=4000
 ENV PORT $PORT
 EXPOSE $PORT 9229 9230

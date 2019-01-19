@@ -3,16 +3,18 @@ import { GqlAuthGuard } from 'src/gql-authguard.decorator';
 import { UseGuards } from '@nestjs/common';
 import { Comment } from './comment.entity';
 import { Ride } from 'src/rides/ride.entity';
-import { PubSub, withFilter } from 'graphql-subscriptions';
-
-const pubSub = new PubSub();
+import { withFilter } from 'graphql-subscriptions';
+import { PubsubService } from 'src/pubsub/pubsub.service';
+import { CommentsService } from './comments.service';
 
 @Resolver('Comment')
 export class CommentsResolver {
+  constructor(private pubSubService: PubsubService, private commentsService: CommentsService) {}
+
   @Query('comments')
   @UseGuards(GqlAuthGuard)
   async getComments(@Args('rideId') rideId: number): Promise<Comment[]> {
-    return Comment.find({ where: { rideId } });
+    return this.commentsService.findByRideId(rideId);
   }
 
   @Mutation('saveComment')
@@ -22,22 +24,13 @@ export class CommentsResolver {
     @Args('body') body: string,
     @Args('rideId') rideId: number
   ): Promise<Comment> {
-    const ride = await Ride.findOne(rideId);
-    const comment = Comment.create({ ride, body, user: req.user }).save();
-    pubSub.publish('commentAdded', { commentAdded: comment });
-    return comment;
+    return this.commentsService.create({ rideId, body, user: req.user });
   }
 
   @Mutation('deleteComment')
   @UseGuards(GqlAuthGuard)
   async deleteComment(@Context('req') req: any, @Args('id') id: number): Promise<boolean> {
-    try {
-      const comment = await Comment.findOne({ where: { id, userId: req.user.id } });
-      comment.remove();
-      return true;
-    } catch (error) {
-      return false;
-    }
+    return this.commentsService.deleteForUser(req.user, id);
   }
 
   // TODO: add GqlAuthGuard
@@ -45,7 +38,7 @@ export class CommentsResolver {
   commentAdded() {
     return {
       subscribe: withFilter(
-        () => pubSub.asyncIterator('commentAdded'),
+        () => this.pubSubService.subscribe(this.commentsService.commentAddedTrigger),
         async (root, args, ctx, info) => {
           const comment = await root.commentAdded;
 

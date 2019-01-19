@@ -1,12 +1,18 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { Participation } from './participation.entity';
 import { User } from 'src/users/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ParticipationService {
+  constructor(
+    @InjectRepository(Participation) private readonly participationRepo: Repository<Participation>
+  ) {}
+
   async create(rideId: number, userId: number): Promise<boolean> {
     try {
-      await Participation.create({ rideId, userId }).save();
+      await this.participationRepo.create({ rideId, userId }).save();
       return true;
     } catch (error) {
       Logger.log(error);

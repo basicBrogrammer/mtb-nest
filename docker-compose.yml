@@ -13,7 +13,7 @@ services: # containers
       GOOGLE_MAPS_KEY: ${GOOGLE_MAPS_KEY}
     command: 'yarn start:dev'
     volumes:
-      - .:/opt/app
+      - .:/opt/app:delegated
       # bind-mounting these two files in will let you add packages during development without rebuilding
       # for example, to add bower to your app while developing, just install it inside the container
       # and then nodemon will restart. Your changes will last until you "docker-compose down" and will
@@ -40,6 +40,9 @@ services: # containers
     environment:
       POSTGRES_PASSWORD: development-password
       POSTGRES_DB: mtb-nest
+    volumes:
+      - mtb-nest-postgres:/var/lib/postgresql/data
 
 volumes:
   notused:
+  mtb-nest-postgres:
