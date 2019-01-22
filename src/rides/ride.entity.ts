@@ -13,7 +13,7 @@ import { User } from 'src/users/user.entity';
 import { Comment } from 'src/comments/comment.entity';
 import { Participation } from 'src/participation/participation.entity';
 
-@Entity()
+@Entity('rides')
 // @Index(['latitude', 'longitude'])
 export class Ride extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -32,7 +32,7 @@ export class Ride extends BaseEntity {
   @Column({ type: 'date' })
   time: Date;
 
-  @ManyToOne((type) => User, (user) => user.rides, { eager: true })
+  @ManyToOne((type) => User, (user) => user.rides, { eager: true, onDelete: 'CASCADE' })
   user: User;
 
   @OneToMany((type) => Comment, (comment) => comment.ride)

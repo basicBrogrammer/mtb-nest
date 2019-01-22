@@ -11,7 +11,7 @@ import { Ride } from 'src/rides/ride.entity';
 import { Comment } from 'src/comments/comment.entity';
 import { Participation } from 'src/participation/participation.entity';
 
-@Entity()
+@Entity('users')
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -31,7 +31,7 @@ export class User extends BaseEntity {
   @OneToMany((type) => Comment, (comment) => comment.user)
   comments: Comment[];
 
-  @OneToMany((type) => Participation, (participation) => participation.ride)
+  @OneToMany((type) => Participation, (participation) => participation.ride )
   participations: Promise<Participation[]>;
 
   @CreateDateColumn()

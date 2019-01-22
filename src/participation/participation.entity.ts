@@ -33,12 +33,12 @@ export class Participation extends BaseEntity {
 
   @Column()
   rideId: number;
-  @ManyToOne((type) => Ride, (ride) => ride.participations)
+  @ManyToOne((type) => Ride, (ride) => ride.participations, { onDelete: 'CASCADE' })
   ride: Ride;
 
   @Column()
   userId: number;
-  @ManyToOne((type) => User, (user) => user.participations)
+  @ManyToOne((type) => User, (user) => user.participations, { onDelete: 'CASCADE' })
   user: User;
 
   @CreateDateColumn()

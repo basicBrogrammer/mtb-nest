@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { TrailsService } from 'src/trails/trails.service';
 import { Ride } from './ride.entity';
 import { CreateRide } from './dto/create-rides.dto';
@@ -35,6 +35,10 @@ export class RidesService {
 
   async updateRide(id: number, rideData: CreateRide): Promise<Ride> {
     const ride = await Ride.findOne(id);
+    const owner = await ride.user;
+    if (owner.id !== rideData.user.id) {
+      throw new UnauthorizedException();
+    }
     const trail = await this.trailsService.getById(rideData.trailId);
 
     ride.trailId = rideData.trailId;
