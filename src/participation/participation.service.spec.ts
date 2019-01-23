@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import { ParticipationModule } from './participation.module';
 import { Ride } from 'src/rides/ride.entity';
-import { getRepository } from 'typeorm';
+import { getRepository, getConnection } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Participation } from './participation.entity';
 import cleanDB from 'src/database-cleaner';
@@ -43,7 +43,7 @@ describe('ParticipationService', () => {
   });
 
   afterEach(async () => {
-    return getRepository(User).delete({});
+    return getConnection().synchronize(true);
   });
 
   it('should be defined', () => {
@@ -52,7 +52,7 @@ describe('ParticipationService', () => {
 
   describe('#create', () => {
     it('returns true if the participation is created', async () => {
-      const ride = await getRepository(Ride)
+      ride = await getRepository(Ride)
         .create(rideDefaults)
         .save();
       const user = await getRepository(User)
@@ -86,7 +86,7 @@ describe('ParticipationService', () => {
         participation = await participationRepo.create();
         participation.ride = ride;
         participation.user = participant;
-        await participation.save();
+        participation = await participation.save();
         fullfill();
       });
     });
@@ -103,7 +103,7 @@ describe('ParticipationService', () => {
     });
 
     it('throws an UnauthorizedException if the owner doesnt match the ride owner', async () => {
-      expect(service.accept(participation.id, participant)).rejects.toThrowError(
+      await expect(service.accept(participation.id, participant)).rejects.toThrowError(
         UnauthorizedException
       );
     });
@@ -127,7 +127,7 @@ describe('ParticipationService', () => {
         participation = await participationRepo.create();
         participation.ride = ride;
         participation.user = participant;
-        await participation.save();
+        participation = await participation.save();
         fullfill();
       });
     });

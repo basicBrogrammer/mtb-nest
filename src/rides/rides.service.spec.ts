@@ -80,7 +80,7 @@ describe('RidesService', () => {
 
       const results = await service.getRidesForUser(otherUser);
       expect(results).toHaveLength(0);
-      expect(rideRepo.find()).resolves.toHaveLength(1);
+      await expect(rideRepo.find()).resolves.toHaveLength(1);
     });
   });
 
@@ -96,9 +96,9 @@ describe('RidesService', () => {
         participation = await participationRepo
           .create({ rideId: ride.id, userId: participant.id })
           .save();
-        expect(rideRepo.find()).resolves.toHaveLength(1);
-        expect(userRepo.find()).resolves.toHaveLength(2);
-        expect(participationRepo.find()).resolves.toHaveLength(1);
+        await expect(rideRepo.find()).resolves.toHaveLength(1);
+        await expect(userRepo.find()).resolves.toHaveLength(2);
+        await expect(participationRepo.find()).resolves.toHaveLength(1);
         fullfill();
       });
     });
@@ -107,37 +107,37 @@ describe('RidesService', () => {
       participation.status_enum = 1;
       await participation.save();
       expect(participation.status()).toBe('accepted');
-      expect(participationRepo.find({ userId: participant.id })).resolves.toHaveLength(1);
-      expect(service.getParticipatingRidesForUser(participant)).resolves.toHaveLength(1);
+      await expect(participationRepo.find({ userId: participant.id })).resolves.toHaveLength(1);
+      await expect(service.getParticipatingRidesForUser(participant)).resolves.toHaveLength(1);
     });
 
     it('does not returns rides for rejected participations', async () => {
       participation.status_enum = 2;
       await participation.save();
       expect(participation.status()).toBe('rejected');
-      expect(participationRepo.find({ userId: participant.id })).resolves.toHaveLength(1);
-      expect(service.getParticipatingRidesForUser(participant)).resolves.toHaveLength(0);
+      await expect(participationRepo.find({ userId: participant.id })).resolves.toHaveLength(1);
+      await expect(service.getParticipatingRidesForUser(participant)).resolves.toHaveLength(0);
     });
 
     it('does not returns rides for pending participations', async () => {
       participation.status_enum = 0;
       await participation.save();
       expect(participation.status()).toBe('pending');
-      expect(participationRepo.find({ userId: participant.id })).resolves.toHaveLength(1);
-      expect(service.getParticipatingRidesForUser(participant)).resolves.toHaveLength(0);
+      await expect(participationRepo.find({ userId: participant.id })).resolves.toHaveLength(1);
+      await expect(service.getParticipatingRidesForUser(participant)).resolves.toHaveLength(0);
     });
   });
 
   describe('#createRide', () => {
     it('creates a ride with given attributes', async () => {
       user = await userRepo.create(userDefaults).save();
-      expect(user.rides).resolves.toHaveLength(0);
+      await expect(user.rides).resolves.toHaveLength(0);
       const result = await service.createRide({ ...rideDefaults, user });
       expect(result).toBeInstanceOf(Ride);
-      expect(rideRepo.find({ where: { userId: user.id } })).resolves.toHaveLength(1);
+      await expect(rideRepo.find({ where: { userId: user.id } })).resolves.toHaveLength(1);
 
       // TODO: why do i have to reload
-      expect(userRepo.find()).resolves.toHaveLength(1);
+      await expect(userRepo.find()).resolves.toHaveLength(1);
       user = await userRepo.findOne(user.id);
       const userRides = await user.rides;
       expect(userRides).toHaveLength(1);
@@ -157,7 +157,7 @@ describe('RidesService', () => {
       let userRides = await user.rides;
       expect(userRides).toHaveLength(1);
       expect(userRides[0].trailId).toEqual(rideDefaults.trailId);
-      expect(rideRepo.find()).resolves.toHaveLength(1);
+      await expect(rideRepo.find()).resolves.toHaveLength(1);
 
       const rideData = { trailId: '7014539', date: new Date(), time: new Date(), user };
       const result = await service.updateRide(ride.id, rideData);
@@ -165,7 +165,7 @@ describe('RidesService', () => {
       user = await userRepo.findOne(user.id);
       userRides = await user.rides;
       expect(userRides).toHaveLength(1);
-      expect(rideRepo.find()).resolves.toHaveLength(1);
+      await expect(rideRepo.find()).resolves.toHaveLength(1);
       expect(userRides[0].trailId).not.toEqual(rideDefaults.trailId);
     });
     it('does not update another users ride', async () => {
@@ -178,7 +178,7 @@ describe('RidesService', () => {
 
       const rideData = { trailId: '7014539', date: new Date(), time: new Date(), user };
       expect(service.updateRide(ride.id, rideData)).rejects.toThrowError(UnauthorizedException);
-      expect(rideRepo.find()).resolves.toHaveLength(1);
+      await expect(rideRepo.find()).resolves.toHaveLength(1);
       ride = await rideRepo.findOne(ride.id);
       expect(ride.trailId).toEqual(rideDefaults.trailId);
       expect(ride.user.id).toEqual(otherUser.id);
