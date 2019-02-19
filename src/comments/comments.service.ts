@@ -4,13 +4,18 @@ import { CreateComment } from './dto/create-comment.dto';
 import { PubsubService } from 'src/pubsub/pubsub.service';
 import { Ride } from 'src/rides/ride.entity';
 import { User } from 'src/users/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 // import { Notification } from "src/notifications/notification.entity";
 
 @Injectable()
 export class CommentsService {
   commentAddedTrigger: string = 'commentAdded';
 
-  constructor(private pubSubService: PubsubService) {}
+  constructor(
+    @InjectRepository(Comment) private readonly commentRepo: Repository<Comment>,
+    private pubSubService: PubsubService
+  ) {}
 
   public async findByRideId(rideId: number): Promise<Comment[]> {
     return Comment.find({ where: { rideId } });
@@ -27,8 +32,7 @@ export class CommentsService {
   public async deleteForUser(user: User, id: number): Promise<boolean> {
     try {
       const comment = await Comment.findOne({ where: { id, userId: user.id } });
-      comment.remove();
-      return true;
+      return comment.remove().then(() => true);
     } catch (error) {
       return false;
     }

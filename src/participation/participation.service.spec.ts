@@ -10,7 +10,7 @@ import { Participation } from './participation.entity';
 import cleanDB from 'src/database-cleaner';
 const defaultDBConfig = require('ormconfig.json');
 const rideDefaults = {
-  trailId: '1234',
+  trailId: '7042687',
   location: 'Asheville, NC',
   date: new Date(),
   time: new Date()
