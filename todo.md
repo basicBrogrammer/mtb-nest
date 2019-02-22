@@ -1,7 +1,6 @@
-Test Services
-[x] participation
-[x] rides
-[ ] comments
-[ ] auth
-[ ] pubsub
-[x] trails
+[ ] Notifications for users
+[ ] Mark as read
+[ ] Ride created
+[ ] Participation accepted
+[ ] Participation Created
+[ ] Comment Created

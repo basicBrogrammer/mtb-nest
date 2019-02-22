@@ -7,19 +7,8 @@ import { Ride } from 'src/rides/ride.entity';
 import { getRepository, getConnection } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Participation } from './participation.entity';
-import cleanDB from 'src/database-cleaner';
+import { rideDefaults, userDefaults } from 'src/tests/db-helpers';
 const defaultDBConfig = require('ormconfig.json');
-const rideDefaults = {
-  trailId: '7042687',
-  location: 'Asheville, NC',
-  date: new Date(),
-  time: new Date()
-};
-const userDefaults = {
-  email: 'bob@email.com',
-  password: 'password',
-  name: 'Bob'
-};
 
 describe('ParticipationService', () => {
   let app: INestApplication;

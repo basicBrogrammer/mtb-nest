@@ -7,18 +7,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { getRepository, Repository, getConnection } from 'typeorm';
 import { Participation } from 'src/participation/participation.entity';
 import { UnauthorizedException } from '@nestjs/common';
+import { RidesModule } from './rides.module';
+import { rideDefaults, userDefaults } from 'src/tests/db-helpers';
 const defaultDBConfig = require('ormconfig.json');
-const userDefaults = {
-  email: 'bob@email.com',
-  password: 'password',
-  name: 'Bob'
-};
-const rideDefaults = {
-  trailId: '7042687',
-  date: new Date(),
-  time: new Date(),
-  location: 'Bent Creek, North Carolina'
-};
 
 describe('RidesService', () => {
   let service: RidesService;
@@ -34,6 +25,7 @@ describe('RidesService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({ ...defaultDBConfig, database: 'mtb-nest-test', logging: false }),
+        RidesModule,
         TrailsModule
       ],
       providers: [RidesService]
@@ -46,10 +38,6 @@ describe('RidesService', () => {
   });
 
   afterEach(async () => {
-    // cleanDB([Participation, User, Ride]);
-    //await participationRepo.delete({});
-    //await rideRepo.delete({});
-    //await userRepo.delete({});
     return getConnection().synchronize(true);
   });
 
@@ -87,6 +75,19 @@ describe('RidesService', () => {
   describe('#getParticipatingRidesForUser', () => {
     beforeEach(async () => {
       return new Promise(async (fullfill, reject) => {
+        await rideRepo
+          .create(rideDefaults)
+          .save()
+          .then((randRide) => {
+            return userRepo
+              .create({ ...userDefaults, email: 'blah@email' })
+              .save()
+              .then((x) => {
+                randRide.user = x;
+                return randRide.save();
+              });
+          }); // random ride
+
         user = await userRepo.create(userDefaults).save();
         ride = await rideRepo.create(rideDefaults);
         ride.user = user;
@@ -96,8 +97,8 @@ describe('RidesService', () => {
         participation = await participationRepo
           .create({ rideId: ride.id, userId: participant.id })
           .save();
-        await expect(rideRepo.find()).resolves.toHaveLength(1);
-        await expect(userRepo.find()).resolves.toHaveLength(2);
+        await expect(rideRepo.find()).resolves.toHaveLength(2);
+        await expect(userRepo.find()).resolves.toHaveLength(3);
         await expect(participationRepo.find()).resolves.toHaveLength(1);
         fullfill();
       });

@@ -4,11 +4,15 @@ import { Ride } from './ride.entity';
 import { CreateRide } from './dto/create-rides.dto';
 import { User } from 'src/users/user.entity';
 import { Participation } from 'src/participation/participation.entity';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class RidesService {
-  constructor(private trailsService: TrailsService) {}
+  constructor(
+    @InjectRepository(Ride) private readonly rideRepo: Repository<Ride>,
+    private trailsService: TrailsService
+  ) {}
 
   async getRidesForUser(user: User): Promise<Ride[]> {
     return user.rides;
@@ -20,11 +24,11 @@ export class RidesService {
 
     const rideIds = parts.map((part) => part.rideId);
 
-    return Ride.find({ where: { id: In(rideIds) } });
+    return this.rideRepo.find({ where: { id: In(rideIds) } });
   }
 
   async createRide(rideData: CreateRide): Promise<Ride> {
-    const ride = Ride.create({
+    const ride = this.rideRepo.create({
       ...rideData,
       time: rideData.time.toISOString()
     });
@@ -34,7 +38,7 @@ export class RidesService {
   }
 
   async updateRide(id: number, rideData: CreateRide): Promise<Ride> {
-    const ride = await Ride.findOne(id);
+    const ride = await this.rideRepo.findOne(id);
     const owner = await ride.user;
     if (owner.id !== rideData.user.id) {
       throw new UnauthorizedException();

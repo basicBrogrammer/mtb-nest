@@ -13,10 +13,6 @@ describe('TrailsService', () => {
     service = module.get<TrailsService>(TrailsService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   it('#getByLocation will return trails near a location', async () => {
     const trails = await service.getByLocation('Asheville, NC');
     expect(trails.length).toBe(10);

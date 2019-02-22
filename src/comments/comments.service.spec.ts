@@ -8,18 +8,8 @@ import { getRepository, getConnection, Repository } from 'typeorm';
 import { Ride } from 'src/rides/ride.entity';
 import { User } from 'src/users/user.entity';
 import { Comment } from './comment.entity';
+import { rideDefaults, userDefaults } from 'src/tests/db-helpers';
 const defaultDBConfig = require('ormconfig.json');
-const rideDefaults = {
-  trailId: '7042687',
-  location: 'Asheville, NC',
-  date: new Date(),
-  time: new Date()
-};
-const userDefaults = {
-  email: 'bob@email.com',
-  password: 'password',
-  name: 'Bob'
-};
 
 describe('CommentsService', () => {
   let service: CommentsService;
