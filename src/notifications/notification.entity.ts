@@ -5,28 +5,33 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  Column
+  Column,
+  OneToOne,
+  JoinColumn
 } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Ride } from 'src/rides/ride.entity';
 // @Index(['latitude', 'longitude'])
-@Entity('comments')
-export class Comment extends BaseEntity {
+@Entity('notifications')
+export class Notification extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   body: string;
+  @Column({ default: false })
+  read: boolean;
 
-  @Column({ nullable: true })
-  rideId: number;
-  @ManyToOne((type) => Ride, (ride) => ride.comments, { eager: true })
-  ride: Ride;
-
-  @Column()
-  userId: number;
-  @ManyToOne((type) => User, (user) => user.comments, { eager: true })
+  // @Column()
+  // userId: number;
+  @ManyToOne((type) => User, (user) => user.notifications, { eager: true })
   user: User;
+
+  @ManyToOne((type) => User, { eager: true })
+  actor: User;
+
+  @ManyToOne((type) => User, { eager: true })
+  ride: Ride;
 
   @CreateDateColumn()
   createdAt: Date;

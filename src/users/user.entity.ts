@@ -10,6 +10,7 @@ import {
 import { Ride } from 'src/rides/ride.entity';
 import { Comment } from 'src/comments/comment.entity';
 import { Participation } from 'src/participation/participation.entity';
+import { Notification } from 'src/notifications/notification.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -31,7 +32,10 @@ export class User extends BaseEntity {
   @OneToMany((type) => Comment, (comment) => comment.user)
   comments: Comment[];
 
-  @OneToMany((type) => Participation, (participation) => participation.ride )
+  @OneToMany((type) => Notification, (notification) => notification.user)
+  notifications: Promise<Notification[]>;
+
+  @OneToMany((type) => Participation, (participation) => participation.ride)
   participations: Promise<Participation[]>;
 
   @CreateDateColumn()
