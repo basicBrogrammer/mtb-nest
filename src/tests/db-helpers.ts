@@ -9,3 +9,10 @@ export const userDefaults = {
   password: 'password',
   name: 'Bob'
 };
+export const nextTick = () => new Promise((res) => process.nextTick(res));
+
+export const flushPromises = (time: number): Promise<any> => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+};

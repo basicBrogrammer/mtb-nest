@@ -6,7 +6,7 @@ import { Ride } from 'src/rides/ride.entity';
 import { User } from 'src/users/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-// import { Notification } from "src/notifications/notification.entity";
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class CommentsService {
@@ -14,6 +14,7 @@ export class CommentsService {
 
   constructor(
     @InjectRepository(Comment) private readonly commentRepo: Repository<Comment>,
+    private notificationService: NotificationsService,
     private pubSubService: PubsubService
   ) {}
 
@@ -23,10 +24,14 @@ export class CommentsService {
 
   public async create(commentData: CreateComment): Promise<Comment> {
     const ride = await Ride.findOne(commentData.rideId);
-    const comment = Comment.create({ ...commentData, ride }).save();
-    this.pubSubService.publish('commentAdded', { commentAdded: comment });
-    // this.notificationService.create({type: 'comment', entry: comment})
-    return comment;
+    return Comment.create({ ...commentData, ride })
+      .save()
+      .then(async (comment) => {
+        this.pubSubService.publish('commentAdded', { commentAdded: comment });
+        this.notificationService.commentCreated(comment);
+
+        return comment;
+      });
   }
 
   public async deleteForUser(user: User, id: number): Promise<boolean> {
