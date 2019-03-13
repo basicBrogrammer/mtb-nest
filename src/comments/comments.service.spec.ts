@@ -39,7 +39,6 @@ describe('CommentsService', () => {
     rideRepo = getRepository(Ride);
     notificationRepo = getRepository(Notification);
     service = module.get<CommentsService>(CommentsService);
-    return getConnection().synchronize(true);
   });
   afterEach(async () => {
     return getConnection().synchronize(true);

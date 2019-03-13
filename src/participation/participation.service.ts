@@ -3,21 +3,29 @@ import { Participation } from './participation.entity';
 import { User } from 'src/users/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class ParticipationService {
   constructor(
-    @InjectRepository(Participation) private readonly participationRepo: Repository<Participation>
+    @InjectRepository(Participation) private readonly participationRepo: Repository<Participation>,
+    private notificationsService: NotificationsService
   ) {}
 
   async create(rideId: number, userId: number): Promise<boolean> {
-    try {
-      await this.participationRepo.create({ rideId, userId }).save();
-      return true;
-    } catch (error) {
-      Logger.log(error);
-      return false;
-    }
+    return this.participationRepo
+      .create({ rideId, userId })
+      .save()
+      .then(
+        async (participation) => {
+          this.notificationsService.participationCreated(participation);
+          return true;
+        },
+        (error) => {
+          Logger.log(error);
+          return false;
+        }
+      );
   }
 
   async accept(participationId: number, owner: User): Promise<boolean> {
@@ -28,8 +36,16 @@ export class ParticipationService {
     }
 
     part.status_enum = 1;
-    await part.save();
-    return part.status() === 'accepted';
+    return part.save().then(
+      (participation) => {
+        this.notificationsService.participationAccepted(participation);
+        return participation.status() === 'accepted';
+      },
+      (error) => {
+        Logger.log(error);
+        return false;
+      }
+    );
   }
 
   async reject(participationId: number, owner: User): Promise<boolean> {

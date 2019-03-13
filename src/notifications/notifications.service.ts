@@ -16,6 +16,7 @@ export class NotificationsService {
   async rideCreated(ride: Ride, actor: User): Promise<number> {
     return 1;
   }
+
   async markAsRead(user: User): Promise<any> {
     return this.notificationRepo.update({ user, read: false }, { read: true });
   }
@@ -25,6 +26,8 @@ export class NotificationsService {
   }
 
   async participationCreated(participation: Participation): Promise<any> {
+    // TODO: Why do i have to research it? Maybe change the param to the participationId
+    participation = await Participation.findOne(participation.id, { relations: ['user', 'ride'] });
     const ride = participation.ride,
       actor = participation.user,
       rideOwner = await ride.user;
@@ -39,6 +42,8 @@ export class NotificationsService {
   }
 
   async participationAccepted(participation: Participation): Promise<any> {
+    // TODO: Why do i have to research it? Maybe change the param to the participationId
+    participation = await Participation.findOne(participation.id, { relations: ['user', 'ride'] });
     const ride = participation.ride,
       user = participation.user,
       rideOwner = await ride.user;
@@ -54,8 +59,8 @@ export class NotificationsService {
   }
 
   async commentCreated(comment: Comment): Promise<any> {
-    const commenter = comment.user;
-    const ride = comment.ride;
+    const commenter = await comment.user;
+    const ride = await comment.ride;
     const rideOwner = await ride.user;
     const participations = await Participation.find({
       relations: ['user'],

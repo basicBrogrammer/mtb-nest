@@ -4,10 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import { ParticipationModule } from './participation.module';
 import { Ride } from 'src/rides/ride.entity';
-import { getRepository, getConnection } from 'typeorm';
+import { getRepository, getConnection, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Participation } from './participation.entity';
-import { rideDefaults, userDefaults } from 'src/tests/db-helpers';
+import { rideDefaults, userDefaults, flushPromises } from 'src/tests/db-helpers';
+import { NotificationsModule } from 'src/notifications/notifications.module';
+import { Notification } from 'src/notifications/notification.entity';
 const defaultDBConfig = require('ormconfig.json');
 
 describe('ParticipationService', () => {
@@ -17,15 +19,24 @@ describe('ParticipationService', () => {
   let ride: Ride;
   let participant: User;
   let participation: Participation;
+  let userRepo: Repository<User>;
+  let rideRepo: Repository<Ride>;
+  let participationRepo: Repository<Participation>;
+  let notificationRepo: Repository<Notification>;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({ ...defaultDBConfig, database: 'mtb-nest-test', logging: false }),
+        NotificationsModule,
         ParticipationModule
       ],
       providers: [ParticipationService]
     }).compile();
+    userRepo = getRepository(User);
+    rideRepo = getRepository(Ride);
+    participationRepo = getRepository(Participation);
+    notificationRepo = getRepository(Notification);
     app = module.createNestApplication();
     await app.init();
     service = module.get<ParticipationService>(ParticipationService);
@@ -35,35 +46,35 @@ describe('ParticipationService', () => {
     return getConnection().synchronize(true);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('#create', () => {
     it('returns true if the participation is created', async () => {
-      ride = await getRepository(Ride)
-        .create(rideDefaults)
-        .save();
+      ride = getRepository(Ride).create(rideDefaults);
+      owner = await userRepo.create({ ...userDefaults, email: 'owner@email.com' }).save();
+      ride.user = owner;
+      await ride.save();
       const user = await getRepository(User)
         .create(userDefaults)
         .save();
       const result = await service.create(ride.id, user.id);
       expect(result).toEqual(true);
+      await flushPromises(200);
+      await expect(notificationRepo.find()).resolves.toHaveLength(1);
+      await expect(notificationRepo.find({ where: { user: owner } })).resolves.toHaveLength(1);
+      return expect(participationRepo.find()).resolves.toHaveLength(1);
     });
 
     it('returns false if an error occurs', async () => {
       const result = await service.create(1, 2);
       expect(result).toEqual(false);
+      await flushPromises(200);
+      await expect(notificationRepo.find({ where: { user: owner } })).resolves.toHaveLength(0);
+      return expect(participationRepo.find()).resolves.toHaveLength(0);
     });
   });
 
   describe('#accept', () => {
     beforeEach(async () => {
       return new Promise(async (fullfill, reject) => {
-        const userRepo = getRepository(User);
-        const rideRepo = getRepository(Ride);
-        const participationRepo = getRepository(Participation);
-
         owner = await userRepo.create(userDefaults).save();
 
         ride = await rideRepo.create({ ...rideDefaults });
@@ -89,6 +100,11 @@ describe('ParticipationService', () => {
       await participation.reload();
       expect(participation.status_enum).toBe(1);
       expect(participation.status()).toBe('accepted');
+      await flushPromises(500);
+      await expect(notificationRepo.find()).resolves.toHaveLength(1);
+      return await expect(
+        notificationRepo.find({ where: { user: participant } })
+      ).resolves.toHaveLength(1);
     });
 
     it('throws an UnauthorizedException if the owner doesnt match the ride owner', async () => {

@@ -40,7 +40,7 @@ describe('NotificationsService', () => {
   });
 
   describe('#notificationsForUser', () => {
-    it('should return return notifications for given user', async () => {
+    it('should return notifications for given user', async () => {
       const user = await userRepo.create(userDefaults).save();
       const otherUser = await userRepo.create({ ...userDefaults, email: 'other@email.com' }).save();
       const rideOwner = await userRepo.create({ ...userDefaults, email: 'rideOwner@email' }).save();
@@ -49,7 +49,7 @@ describe('NotificationsService', () => {
         .create({ body: 'hey', actor: rideOwner, user, ride })
         .save();
       const otherNotification = await notificationRepo
-        .create({ body: 'hey', actor: rideOwner, user: otherUser, ride })
+        .create({ body: 'bye', actor: rideOwner, user: otherUser, ride })
         .save();
 
       service.notificationsForUser(user).then((result) => {
@@ -136,6 +136,7 @@ describe('NotificationsService', () => {
   });
 
   describe('#commentCreated', () => {
+    //it.skip('should notify the ride ride owner without participants');
     it('should notify the ride owner and participants of the comment', async () => {
       const rideOwner = await userRepo.create(userDefaults).save(),
         commenter = await userRepo.create({ ...userDefaults, email: 'commenter@email.com' }).save(),
