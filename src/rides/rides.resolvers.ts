@@ -10,8 +10,8 @@ export class RidesResolvers {
   constructor(private ridesService: RidesService, private trailService: TrailsService) {}
 
   @Query('rides')
-  async getRides(): Promise<Ride[]> {
-    return Ride.find();
+  async getRides(@Args('page') page: number): Promise<Ride[]> {
+    return this.ridesService.getRides(page);
   }
 
   @Query('ride')

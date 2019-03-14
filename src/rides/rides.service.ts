@@ -9,10 +9,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class RidesService {
+  perPage: number;
   constructor(
     @InjectRepository(Ride) private readonly rideRepo: Repository<Ride>,
     private trailsService: TrailsService
-  ) {}
+  ) {
+    this.perPage = 25;
+  }
+
+  async getRides(page: number): Promise<Ride[]> {
+    const skip = (page - 1) * this.perPage;
+    return this.rideRepo.find({ take: this.perPage, skip });
+  }
 
   async getRidesForUser(user: User): Promise<Ride[]> {
     return user.rides;

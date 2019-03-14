@@ -41,8 +41,20 @@ describe('RidesService', () => {
     return getConnection().synchronize(true);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('#getRides', () => {
+    it('should paginate', async () => {
+      await Promise.all(
+        Array(30)
+          .fill(1)
+          .map(() => {
+            return rideRepo.create(rideDefaults).save();
+          })
+      );
+      expect(rideRepo.find()).resolves.toHaveLength(30);
+      expect(service.getRides(1)).resolves.toHaveLength(25);
+      expect(service.getRides(2)).resolves.toHaveLength(5);
+    });
+    it.skip('should be searchable by location', () => {});
   });
 
   describe('#getRidesForUser', () => {
