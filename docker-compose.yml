@@ -39,15 +39,15 @@ services: # containers
       driver: none
 
   postgres:
-    image: postgres:11.1
+    image: mdillon/postgis:11
     environment:
       POSTGRES_PASSWORD: development-password
       POSTGRES_DB: mtb-nest
     volumes:
-      - mtb-nest-postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     logging:
       driver: none
 
 volumes:
   notused:
-  mtb-nest-postgres:
+  postgres:

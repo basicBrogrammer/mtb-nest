@@ -7,7 +7,8 @@ import {
   UpdateDateColumn,
   BaseEntity,
   BeforeInsert,
-  OneToMany
+  OneToMany,
+  Index
 } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Comment } from 'src/comments/comment.entity';
@@ -22,8 +23,12 @@ export class Ride extends BaseEntity {
   @Column()
   trailId: string;
 
-  @Column()
-  location: string;
+  @Column('geography', {
+    spatialFeatureType: 'Point',
+    srid: 4326
+  })
+  @Index({ spatial: true })
+  location: object;
 
   @Column({ type: 'date' })
   date: Date;

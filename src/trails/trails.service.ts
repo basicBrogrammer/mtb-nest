@@ -1,24 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import fetch from 'node-fetch';
 import { RedisService } from 'src/redis/redis.service';
-const googleMapsClient = require('@google/maps').createClient({
-  key: process.env.GOOGLE_MAPS_KEY,
-  Promise
-});
+import { GeocodeService } from 'src/geocode/geocode.service';
 const mtbProjectBaseUrl = 'https://www.mtbproject.com/data';
 const mtbProjectApiKey = process.env.MTB_PROJECT_KEY;
 
 @Injectable()
 export class TrailsService {
-  constructor(private redis: RedisService) {}
+  constructor(private redis: RedisService, private geocode: GeocodeService) {}
 
   async getByLocation(location: string) {
-    const response = await this.redis.wrap(
-      `geocode-${location.toLowerCase().replace(/\W/g, '-')}`,
-      this.requestGeocode(location),
-      true
-    );
-    const { lat, lng } = response.json.results[0].geometry.location;
+    const { lat, lng } = await this.geocode.getLatAndLong(location);
 
     // Fetch the MTB Project rides
     return this.redis.wrap(
@@ -31,14 +23,6 @@ export class TrailsService {
   // return value of trail interface?
   async getById(id: string) {
     return this.redis.wrap(`get-trails-by-id-${id}`, this.requestTrailById(id), true);
-  }
-
-  private requestGeocode(location: string): Promise<any> {
-    return googleMapsClient
-      .geocode({
-        address: location
-      })
-      .asPromise();
   }
 
   private requestTrailByLatAndLng(lat: number, lng: number): Promise<any> {

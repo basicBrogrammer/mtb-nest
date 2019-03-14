@@ -155,7 +155,7 @@ describe('RidesService', () => {
       const userRides = await user.rides;
       expect(userRides).toHaveLength(1);
       expect(userRides[0].trailId).toBe(rideDefaults.trailId);
-      expect(userRides[0].location).toBe('Bent Creek, North Carolina');
+      expect(userRides[0].location).toEqual({ coordinates: [35.5951, 82.5515], type: 'Point' });
     });
   });
 

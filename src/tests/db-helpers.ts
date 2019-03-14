@@ -2,7 +2,10 @@ export const rideDefaults = {
   trailId: '7042687',
   date: new Date(),
   time: new Date(),
-  location: 'Asheville, NC'
+  location: {
+    type: 'Point',
+    coordinates: [35.5951, 82.5515]
+  }
 };
 export const userDefaults = {
   email: 'bob@email.com',

@@ -41,7 +41,10 @@ export class RidesService {
       time: rideData.time.toISOString()
     });
     const trail = await this.trailsService.getById(rideData.trailId);
-    ride.location = trail.location;
+    ride.location = {
+      type: 'Point',
+      coordinates: [35.5951, 82.5515]
+    };
     return ride.save();
   }
 
@@ -56,7 +59,10 @@ export class RidesService {
     ride.trailId = rideData.trailId;
     ride.date = rideData.date;
     ride.time = rideData.time;
-    ride.location = trail.location;
+    ride.location = {
+      type: 'Point',
+      coordinates: [35.5951, 82.5515]
+    };
 
     return ride.save();
   }

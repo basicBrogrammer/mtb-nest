@@ -16,6 +16,7 @@ import { CommentsModule } from './comments/comments.module';
 import { ParticipationModule } from './participation/participation.module';
 import { PubsubModule } from './pubsub/pubsub.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { GeocodeModule } from './geocode/geocode.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { NotificationsModule } from './notifications/notifications.module';
     CommentsModule,
     ParticipationModule,
     PubsubModule,
-    NotificationsModule
+    NotificationsModule,
+    GeocodeModule
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, RedisService]

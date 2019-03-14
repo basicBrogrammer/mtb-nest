@@ -1,13 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TrailsService } from './trails.service';
 import { RedisModule } from 'src/redis/redis.module';
+import { GeocodeModule } from 'src/geocode/geocode.module';
 
 describe('TrailsService', () => {
   let service: TrailsService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [RedisModule],
+      imports: [RedisModule, GeocodeModule],
       providers: [TrailsService]
     }).compile();
     service = module.get<TrailsService>(TrailsService);
