@@ -9,6 +9,7 @@ import { Participation } from 'src/participation/participation.entity';
 import { UnauthorizedException } from '@nestjs/common';
 import { RidesModule } from './rides.module';
 import { rideDefaults, userDefaults } from 'src/tests/db-helpers';
+import { GeocodeModule } from 'src/geocode/geocode.module';
 const defaultDBConfig = require('ormconfig.json');
 
 describe('RidesService', () => {
@@ -26,6 +27,7 @@ describe('RidesService', () => {
       imports: [
         TypeOrmModule.forRoot({ ...defaultDBConfig, database: 'mtb-nest-test', logging: false }),
         RidesModule,
+        GeocodeModule,
         TrailsModule
       ],
       providers: [RidesService]
@@ -54,7 +56,24 @@ describe('RidesService', () => {
       expect(service.getRides(1)).resolves.toHaveLength(25);
       expect(service.getRides(2)).resolves.toHaveLength(5);
     });
-    it.skip('should be searchable by location', () => {});
+    it('should be searchable by location', async () => {
+      const northCarolinaRide = await rideRepo.create(rideDefaults).save();
+      const boulderLocation = {
+        type: 'Point',
+        coordinates: [39.3443, -105.2573]
+      };
+      const coloradoRide = await rideRepo
+        .create({ ...rideDefaults, trailId: '7015764', location: boulderLocation })
+        .save();
+
+      let result = await service.getRides(1, 'Asheville, NC');
+      expect(result).toHaveLength(1);
+      expect(result[0].trailId).toBe(rideDefaults.trailId);
+
+      result = await service.getRides(1, 'Boulder, CO');
+      expect(result).toHaveLength(1);
+      expect(result[0].trailId).toBe('7015764');
+    });
   });
 
   describe('#getRidesForUser', () => {
@@ -155,7 +174,10 @@ describe('RidesService', () => {
       const userRides = await user.rides;
       expect(userRides).toHaveLength(1);
       expect(userRides[0].trailId).toBe(rideDefaults.trailId);
-      expect(userRides[0].location).toEqual({ coordinates: [35.5951, 82.5515], type: 'Point' });
+      expect(userRides[0].location).toEqual({
+        coordinates: [35.5090006, -82.6079028],
+        type: 'Point'
+      });
     });
   });
 
@@ -181,6 +203,7 @@ describe('RidesService', () => {
       await expect(rideRepo.find()).resolves.toHaveLength(1);
       expect(userRides[0].trailId).not.toEqual(rideDefaults.trailId);
     });
+
     it('does not update another users ride', async () => {
       user = await userRepo.create(userDefaults).save();
       const otherUser = await userRepo.create({ ...userDefaults, email: 'bob1@email' }).save();

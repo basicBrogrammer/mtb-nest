@@ -4,7 +4,7 @@ export const rideDefaults = {
   time: new Date(),
   location: {
     type: 'Point',
-    coordinates: [35.5951, 82.5515]
+    coordinates: [35.5951, -82.5515]
   }
 };
 export const userDefaults = {

@@ -6,20 +6,36 @@ import { User } from 'src/users/user.entity';
 import { Participation } from 'src/participation/participation.entity';
 import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GeocodeService } from 'src/geocode/geocode.service';
 
 @Injectable()
 export class RidesService {
   perPage: number;
   constructor(
     @InjectRepository(Ride) private readonly rideRepo: Repository<Ride>,
-    private trailsService: TrailsService
+    private trailsService: TrailsService,
+    private geocode: GeocodeService
   ) {
     this.perPage = 25;
   }
 
-  async getRides(page: number): Promise<Ride[]> {
+  async getRides(page: number, location?: string): Promise<Ride[]> {
     const skip = (page - 1) * this.perPage;
-    return this.rideRepo.find({ take: this.perPage, skip });
+    const findOptions = {
+      take: this.perPage,
+      skip
+    };
+    let queryBuilder = this.rideRepo.createQueryBuilder('ride');
+    if (location && location.length > 0) {
+      const { lat, lng } = await this.geocode.getLatAndLong(location);
+      queryBuilder = queryBuilder
+        .where('ST_DWithin(ride.location, ST_MakePoint(:lat, :lng)::geography, 100000)')
+        .setParameters({ lat, lng });
+    }
+    return queryBuilder
+      .skip(skip)
+      .take(this.perPage)
+      .getMany();
   }
 
   async getRidesForUser(user: User): Promise<Ride[]> {
@@ -41,9 +57,11 @@ export class RidesService {
       time: rideData.time.toISOString()
     });
     const trail = await this.trailsService.getById(rideData.trailId);
+
+    const { lat, lng } = await this.geocode.getLatAndLong(trail.location);
     ride.location = {
       type: 'Point',
-      coordinates: [35.5951, 82.5515]
+      coordinates: [lat, lng]
     };
     return ride.save();
   }
@@ -59,9 +77,10 @@ export class RidesService {
     ride.trailId = rideData.trailId;
     ride.date = rideData.date;
     ride.time = rideData.time;
+    const { lat, lng } = await this.geocode.getLatAndLong(trail.location);
     ride.location = {
       type: 'Point',
-      coordinates: [35.5951, 82.5515]
+      coordinates: [lat, lng]
     };
 
     return ride.save();
