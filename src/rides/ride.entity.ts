@@ -34,7 +34,7 @@ export class Ride extends BaseEntity {
   date: Date;
 
   // TODO: Maybe this should be type: 'time'
-  @Column({ type: 'date' })
+  @Column({ type: 'time with time zone' })
   time: Date;
 
   @ManyToOne((type) => User, (user) => user.rides, { eager: true, onDelete: 'CASCADE' })

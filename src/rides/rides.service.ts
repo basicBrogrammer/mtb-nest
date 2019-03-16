@@ -4,7 +4,7 @@ import { Ride } from './ride.entity';
 import { CreateRide } from './dto/create-rides.dto';
 import { User } from 'src/users/user.entity';
 import { Participation } from 'src/participation/participation.entity';
-import { In, Repository } from 'typeorm';
+import { In, Repository, MoreThanOrEqual } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GeocodeService } from 'src/geocode/geocode.service';
 
@@ -21,25 +21,26 @@ export class RidesService {
 
   async getRides(page: number, location?: string): Promise<Ride[]> {
     const skip = (page - 1) * this.perPage;
-    const findOptions = {
-      take: this.perPage,
-      skip
-    };
-    let queryBuilder = this.rideRepo.createQueryBuilder('ride');
+    let sql = 'ride.date >= :today';
+    let parameters: any = { today: new Date() };
+
     if (location && location.length > 0) {
       const { lat, lng } = await this.geocode.getLatAndLong(location);
-      queryBuilder = queryBuilder
-        .where('ST_DWithin(ride.location, ST_MakePoint(:lat, :lng)::geography, 100000)')
-        .setParameters({ lat, lng });
+      sql += ' and ST_DWithin(ride.location, ST_MakePoint(:lat, :lng)::geography, 100000)';
+      parameters = { ...parameters, lng, lat };
     }
-    return queryBuilder
+
+    return this.rideRepo
+      .createQueryBuilder('ride')
+      .where(sql)
+      .setParameters(parameters)
       .skip(skip)
       .take(this.perPage)
       .getMany();
   }
 
   async getRidesForUser(user: User): Promise<Ride[]> {
-    return user.rides;
+    return this.rideRepo.find({ where: { user, date: MoreThanOrEqual(new Date()) } });
   }
 
   async getParticipatingRidesForUser(user: User): Promise<Ride[]> {
@@ -48,14 +49,11 @@ export class RidesService {
 
     const rideIds = parts.map((part) => part.rideId);
 
-    return this.rideRepo.find({ where: { id: In(rideIds) } });
+    return this.rideRepo.find({ where: { id: In(rideIds), date: MoreThanOrEqual(new Date()) } });
   }
 
   async createRide(rideData: CreateRide): Promise<Ride> {
-    const ride = this.rideRepo.create({
-      ...rideData,
-      time: rideData.time.toISOString()
-    });
+    const ride = this.rideRepo.create(rideData);
     const trail = await this.trailsService.getById(rideData.trailId);
 
     const { lat, lng } = await this.geocode.getLatAndLong(trail.location);
@@ -69,20 +67,20 @@ export class RidesService {
   async updateRide(id: number, rideData: CreateRide): Promise<Ride> {
     const ride = await this.rideRepo.findOne(id);
     const owner = await ride.user;
+
     if (owner.id !== rideData.user.id) {
       throw new UnauthorizedException();
     }
-    const trail = await this.trailsService.getById(rideData.trailId);
 
-    ride.trailId = rideData.trailId;
-    ride.date = rideData.date;
-    ride.time = rideData.time;
+    const time = rideData.time.toISOString().split('T')[1];
+    const trail = await this.trailsService.getById(rideData.trailId);
     const { lat, lng } = await this.geocode.getLatAndLong(trail.location);
-    ride.location = {
+    const location = {
       type: 'Point',
       coordinates: [lat, lng]
     };
+    await this.rideRepo.update(id, { ...rideData, location, time });
 
-    return ride.save();
+    return this.rideRepo.findOne(id);
   }
 }

@@ -1,7 +1,8 @@
+const [date, time] = new Date().toISOString().split('T');
 export const rideDefaults = {
   trailId: '7042687',
-  date: new Date(),
-  time: new Date(),
+  date,
+  time: time.replace('Z', '+00'),
   location: {
     type: 'Point',
     coordinates: [35.5951, -82.5515]
@@ -14,8 +15,8 @@ export const userDefaults = {
 };
 export const nextTick = () => new Promise((res) => process.nextTick(res));
 
-export const flushPromises = (time: number): Promise<any> => {
+export const flushPromises = (waitTime: number): Promise<any> => {
   return new Promise((resolve) => {
-    setTimeout(resolve, time);
+    setTimeout(resolve, waitTime);
   });
 };

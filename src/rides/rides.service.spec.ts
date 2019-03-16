@@ -54,8 +54,9 @@ describe('RidesService', () => {
       );
       expect(rideRepo.find()).resolves.toHaveLength(30);
       expect(service.getRides(1)).resolves.toHaveLength(25);
-      expect(service.getRides(2)).resolves.toHaveLength(5);
+      return expect(service.getRides(2)).resolves.toHaveLength(5);
     });
+
     it('should be searchable by location', async () => {
       const northCarolinaRide = await rideRepo.create(rideDefaults).save();
       const boulderLocation = {
@@ -73,6 +74,23 @@ describe('RidesService', () => {
       result = await service.getRides(1, 'Boulder, CO');
       expect(result).toHaveLength(1);
       expect(result[0].trailId).toBe('7015764');
+    });
+
+    it('should not include rides in the past', async () => {
+      const rideToday = await rideRepo.create(rideDefaults).save();
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      const rideYesterday = await rideRepo.create({ ...rideDefaults, date: yesterday }).save();
+      let result = await service.getRides(1);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual(rideToday);
+
+      result = await service.getRides(1, 'Asheville, NC');
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual(rideToday);
     });
   });
 
@@ -100,6 +118,22 @@ describe('RidesService', () => {
       const results = await service.getRidesForUser(otherUser);
       expect(results).toHaveLength(0);
       await expect(rideRepo.find()).resolves.toHaveLength(1);
+    });
+
+    it('should not include rides in the past', async () => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const rideYesterday = await rideRepo.create({ ...rideDefaults, date: yesterday });
+      rideYesterday.user = user;
+      await rideYesterday.save();
+
+      expect(rideRepo.find({ where: { user } })).resolves.toHaveLength(2);
+      let result = await service.getRidesForUser(user);
+
+      result = await service.getRidesForUser(user);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual(ride);
     });
   });
 
@@ -157,6 +191,25 @@ describe('RidesService', () => {
       expect(participation.status()).toBe('pending');
       await expect(participationRepo.find({ userId: participant.id })).resolves.toHaveLength(1);
       await expect(service.getParticipatingRidesForUser(participant)).resolves.toHaveLength(0);
+    });
+
+    it('should not include rides in the past', async () => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      const rideYesterday = await rideRepo.create({ ...rideDefaults, date: yesterday }).save();
+
+      participation.status_enum = 1;
+      await participation.save();
+
+      participation = await participationRepo
+        .create({ rideId: rideYesterday.id, userId: participant.id, status_enum: 1 })
+        .save();
+
+      const result = await service.getParticipatingRidesForUser(participant);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual(ride);
     });
   });
 
