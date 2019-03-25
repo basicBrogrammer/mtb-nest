@@ -20,7 +20,20 @@ import { GeocodeModule } from './geocode/geocode.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      synchronize: true,
+      logging: true,
+      entities: ['src/**/**.entity{.ts,.js}'],
+      migrations: ['src/migration/**/*.ts'],
+      subscribers: ['src/subscriber/**/*.ts'],
+      cli: {
+        entitiesDir: 'src/entity',
+        migrationsDir: 'src/migration',
+        subscribersDir: 'src/subscriber'
+      }
+    }),
     GraphQLModule.forRoot({
       context: ({ req }) => ({ req }),
       typePaths: ['./**/*.graphql'],

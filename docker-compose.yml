@@ -14,11 +14,8 @@ services: # containers
     volumes:
       - .:/opt/node_app:delegated
       - /opt/node_app/node_modules
-    environment:
-      REDIS_HOST: redis
-      APP_SECRET: ${APP_SECRET}
-      MTB_PROJECT_KEY: ${MTB_PROJECT_KEY}
-      GOOGLE_MAPS_KEY: ${GOOGLE_MAPS_KEY}
+    env_file:
+      - .env
     depends_on:
       - redis
       - postgres
