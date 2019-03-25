@@ -7,10 +7,9 @@ import { Ride } from 'src/rides/ride.entity';
 import { getRepository, getConnection, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Participation } from './participation.entity';
-import { rideDefaults, userDefaults, flushPromises } from 'src/tests/db-helpers';
+import { rideDefaults, userDefaults, flushPromises, typeormTestConfig } from 'src/tests/db-helpers';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { Notification } from 'src/notifications/notification.entity';
-const defaultDBConfig = require('ormconfig.json');
 
 describe('ParticipationService', () => {
   let app: INestApplication;
@@ -26,11 +25,7 @@ describe('ParticipationService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({ ...defaultDBConfig, database: 'mtb-nest-test', logging: false }),
-        NotificationsModule,
-        ParticipationModule
-      ],
+      imports: [TypeOrmModule.forRoot(typeormTestConfig), NotificationsModule, ParticipationModule],
       providers: [ParticipationService]
     }).compile();
     userRepo = getRepository(User);

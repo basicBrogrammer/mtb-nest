@@ -8,9 +8,8 @@ import { getRepository, Repository, getConnection } from 'typeorm';
 import { Participation } from 'src/participation/participation.entity';
 import { UnauthorizedException } from '@nestjs/common';
 import { RidesModule } from './rides.module';
-import { rideDefaults, userDefaults } from 'src/tests/db-helpers';
+import { rideDefaults, userDefaults, typeormTestConfig } from 'src/tests/db-helpers';
 import { GeocodeModule } from 'src/geocode/geocode.module';
-const defaultDBConfig = require('ormconfig.json');
 
 describe('RidesService', () => {
   let service: RidesService;
@@ -24,12 +23,7 @@ describe('RidesService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({ ...defaultDBConfig, database: 'mtb-nest-test', logging: false }),
-        RidesModule,
-        GeocodeModule,
-        TrailsModule
-      ],
+      imports: [TypeOrmModule.forRoot(typeormTestConfig), RidesModule, GeocodeModule, TrailsModule],
       providers: [RidesService]
     }).compile();
     userRepo = getRepository(User);
@@ -217,7 +211,7 @@ describe('RidesService', () => {
     it('creates a ride with given attributes', async () => {
       user = await userRepo.create(userDefaults).save();
       await expect(user.rides).resolves.toHaveLength(0);
-      const result = await service.createRide({ ...rideDefaults, user });
+      const result = await service.createRide({ ...rideDefaults, time: new Date(), user });
       expect(result).toBeInstanceOf(Ride);
       await expect(rideRepo.find({ where: { userId: user.id } })).resolves.toHaveLength(1);
 

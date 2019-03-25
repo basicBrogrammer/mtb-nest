@@ -8,11 +8,10 @@ import { getRepository, getConnection, Repository } from 'typeorm';
 import { Ride } from 'src/rides/ride.entity';
 import { User } from 'src/users/user.entity';
 import { Comment } from './comment.entity';
-import { rideDefaults, userDefaults, flushPromises } from 'src/tests/db-helpers';
+import { rideDefaults, userDefaults, flushPromises, typeormTestConfig } from 'src/tests/db-helpers';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { Notification } from 'src/notifications/notification.entity';
 import { Participation } from 'src/participation/participation.entity';
-const defaultDBConfig = require('ormconfig.json');
 
 describe('CommentsService', () => {
   let service: CommentsService;
@@ -27,7 +26,7 @@ describe('CommentsService', () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot({ ...defaultDBConfig, database: 'mtb-nest-test', logging: false }),
+        TypeOrmModule.forRoot(typeormTestConfig),
         NotificationsModule,
         CommentsModule,
         PubsubModule

@@ -53,7 +53,8 @@ export class RidesService {
   }
 
   async createRide(rideData: CreateRide): Promise<Ride> {
-    const ride = this.rideRepo.create(rideData);
+    const time = rideData.time.toISOString().split('T')[1];
+    const ride = this.rideRepo.create({ ...rideData, time });
     const trail = await this.trailsService.getById(rideData.trailId);
 
     const { lat, lng } = await this.geocode.getLatAndLong(trail.location);

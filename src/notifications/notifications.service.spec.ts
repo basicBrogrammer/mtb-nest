@@ -5,11 +5,10 @@ import { Repository, getRepository, getConnection } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Ride } from 'src/rides/ride.entity';
 import { Participation } from 'src/participation/participation.entity';
-import { rideDefaults, userDefaults } from 'src/tests/db-helpers';
+import { rideDefaults, userDefaults, typeormTestConfig } from 'src/tests/db-helpers';
 import { NotificationsModule } from './notifications.module';
 import { Notification } from './notification.entity';
 import { Comment } from 'src/comments/comment.entity';
-const defaultDBConfig = require('ormconfig.json');
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
@@ -21,10 +20,7 @@ describe('NotificationsService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({ ...defaultDBConfig, database: 'mtb-nest-test', logging: false }),
-        NotificationsModule
-      ],
+      imports: [TypeOrmModule.forRoot(typeormTestConfig), NotificationsModule],
       providers: [NotificationsService]
     }).compile();
     userRepo = getRepository(User);

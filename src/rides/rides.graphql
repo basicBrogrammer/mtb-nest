@@ -1,13 +1,13 @@
 scalar Date
 type Query {
-  rides: [Ride!]
+  rides(page: Int!): [Ride!]
   ride(id: Int!): Ride
   myRides: [Ride]!
   myParticipatingRides: [Ride]!
 }
 
 type Mutation {
-  saveRide(id: Int, trailId: String!, date: Date!, time: Date!): Ride!
+  saveRide(trailId: String!, date: Date!, time: Date!, id: Int): Ride!
   deleteRide(id: Int): Boolean!
 }
 

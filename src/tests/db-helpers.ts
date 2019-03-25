@@ -20,3 +20,22 @@ export const flushPromises = (waitTime: number): Promise<any> => {
     setTimeout(resolve, waitTime);
   });
 };
+
+export const typeormTestConfig = {
+  type: 'postgres',
+  host: 'postgres',
+  port: 5432,
+  username: 'postgres',
+  password: 'development-password',
+  database: 'mtb-nest-test',
+  synchronize: true,
+  logging: false,
+  entities: ['src/**/**.entity{.ts,.js}'],
+  migrations: ['src/migration/**/*.ts'],
+  subscribers: ['src/subscriber/**/*.ts'],
+  cli: {
+    entitiesDir: 'src/entity',
+    migrationsDir: 'src/migration',
+    subscribersDir: 'src/subscriber'
+  }
+};

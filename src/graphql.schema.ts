@@ -1,3 +1,10 @@
+
+/** ------------------------------------------------------
+ * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+ * -------------------------------------------------------
+ */
+
+/* tslint:disable */
 export class AuthPayload {
     token: string;
     user: User;
@@ -22,7 +29,7 @@ export abstract class IMutation {
 
     abstract rejectParticipant(id: number): boolean | Promise<boolean>;
 
-    abstract saveRide(id?: number, trailId: string, date: Date, time: Date): Ride | Promise<Ride>;
+    abstract saveRide(trailId: string, date: Date, time: Date, id?: number): Ride | Promise<Ride>;
 
     abstract deleteRide(id?: number): boolean | Promise<boolean>;
 
@@ -43,7 +50,7 @@ export abstract class IQuery {
 
     abstract participations(): Participation[] | Promise<Participation[]>;
 
-    abstract rides(): Ride[] | Promise<Ride[]>;
+    abstract rides(page: number): Ride[] | Promise<Ride[]>;
 
     abstract ride(id: number): Ride | Promise<Ride>;
 
@@ -51,9 +58,9 @@ export abstract class IQuery {
 
     abstract myParticipatingRides(): Ride[] | Promise<Ride[]>;
 
-    abstract trails(location: string): Trail[] | Promise<Trail[]>;
-
     abstract users(): User[] | Promise<User[]>;
+
+    abstract trails(location: string): Trail[] | Promise<Trail[]>;
 
     abstract temp__(): boolean | Promise<boolean>;
 }
