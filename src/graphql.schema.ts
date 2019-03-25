@@ -58,9 +58,9 @@ export abstract class IQuery {
 
     abstract myParticipatingRides(): Ride[] | Promise<Ride[]>;
 
-    abstract users(): User[] | Promise<User[]>;
-
     abstract trails(location: string): Trail[] | Promise<Trail[]>;
+
+    abstract users(): User[] | Promise<User[]>;
 
     abstract temp__(): boolean | Promise<boolean>;
 }
