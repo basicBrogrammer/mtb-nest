@@ -24,7 +24,7 @@ import { GeocodeModule } from './geocode/geocode.module';
       url: process.env.DATABASE_URL,
       synchronize: true,
       logging: true,
-      entities: ['src/**/**.entity{.ts,.js}'],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       migrations: ['src/migration/**/*.ts'],
       subscribers: ['src/subscriber/**/*.ts'],
       cli: {
