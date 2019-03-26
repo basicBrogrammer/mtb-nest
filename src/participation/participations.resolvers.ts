@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { Participation } from './participation.entity';
 import { UseGuards, Logger } from '@nestjs/common';
-import { GqlAuthGuard } from 'src/gql-authguard.decorator';
+import { GqlAuthGuard } from '../gql-authguard.decorator';
 import { ParticipationService } from './participation.service';
 
 @Resolver('participations')

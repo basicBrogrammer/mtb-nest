@@ -9,8 +9,8 @@ import {
   OneToOne,
   JoinColumn
 } from 'typeorm';
-import { User } from 'src/users/user.entity';
-import { Ride } from 'src/rides/ride.entity';
+import { User } from '../users/user.entity';
+import { Ride } from '../rides/ride.entity';
 // @Index(['latitude', 'longitude'])
 @Entity('notifications')
 export class Notification extends BaseEntity {

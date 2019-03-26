@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import fetch from 'node-fetch';
-import { RedisService } from 'src/redis/redis.service';
-import { GeocodeService } from 'src/geocode/geocode.service';
+import { RedisService } from '../redis/redis.service';
+import { GeocodeService } from '../geocode/geocode.service';
 const mtbProjectBaseUrl = 'https://www.mtbproject.com/data';
 const mtbProjectApiKey = process.env.MTB_PROJECT_KEY;
 

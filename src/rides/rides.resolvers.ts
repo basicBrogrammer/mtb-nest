@@ -1,9 +1,9 @@
 import { Query, Mutation, Resolver, Context, Args, ResolveProperty, Parent } from '@nestjs/graphql';
 import { Ride } from './ride.entity';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from 'src/gql-authguard.decorator';
+import { GqlAuthGuard } from '../gql-authguard.decorator';
 import { RidesService } from './rides.service';
-import { TrailsService } from 'src/trails/trails.service';
+import { TrailsService } from '../trails/trails.service';
 
 @Resolver('Ride')
 export class RidesResolvers {

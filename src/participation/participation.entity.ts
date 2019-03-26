@@ -9,8 +9,8 @@ import {
   Column,
   ManyToOne
 } from 'typeorm';
-import { Ride } from 'src/rides/ride.entity';
-import { User } from 'src/users/user.entity';
+import { Ride } from '../rides/ride.entity';
+import { User } from '../users/user.entity';
 
 @Entity()
 export class Participation extends BaseEntity {

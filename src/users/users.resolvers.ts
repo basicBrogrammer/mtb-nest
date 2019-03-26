@@ -3,8 +3,8 @@ import * as jwt from 'jsonwebtoken';
 import { Mutation, Query, Resolver, Args, Context } from '@nestjs/graphql';
 import { User } from './user.entity';
 import { UseGuards, Logger } from '@nestjs/common';
-import { GqlAuthGuard } from 'src/gql-authguard.decorator';
-import { AuthService } from 'src/auth/auth.service';
+import { GqlAuthGuard } from '../gql-authguard.decorator';
+import { AuthService } from '../auth/auth.service';
 
 @Resolver('User')
 export class UsersResolvers {

@@ -1,10 +1,10 @@
 import { Resolver, Args, Context, Query, Mutation, Subscription } from '@nestjs/graphql';
-import { GqlAuthGuard } from 'src/gql-authguard.decorator';
+import { GqlAuthGuard } from '../gql-authguard.decorator';
 import { UseGuards } from '@nestjs/common';
 import { Comment } from './comment.entity';
-import { Ride } from 'src/rides/ride.entity';
+import { Ride } from '../rides/ride.entity';
 import { withFilter } from 'graphql-subscriptions';
-import { PubsubService } from 'src/pubsub/pubsub.service';
+import { PubsubService } from '../pubsub/pubsub.service';
 import { CommentsService } from './comments.service';
 
 @Resolver('Comment')

@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './notification.entity';
 import { Repository } from 'typeorm';
-import { Ride } from 'src/rides/ride.entity';
-import { User } from 'src/users/user.entity';
-import { Participation } from 'src/participation/participation.entity';
-import { Comment } from 'src/comments/comment.entity';
+import { Ride } from '../rides/ride.entity';
+import { User } from '../users/user.entity';
+import { Participation } from '../participation/participation.entity';
+import { Comment } from '../comments/comment.entity';
 
 @Injectable()
 export class NotificationsService {

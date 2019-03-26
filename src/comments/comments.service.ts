@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Comment } from './comment.entity';
 import { CreateComment } from './dto/create-comment.dto';
-import { PubsubService } from 'src/pubsub/pubsub.service';
-import { Ride } from 'src/rides/ride.entity';
-import { User } from 'src/users/user.entity';
+import { PubsubService } from '../pubsub/pubsub.service';
+import { Ride } from '../rides/ride.entity';
+import { User } from '../users/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NotificationsService } from 'src/notifications/notifications.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class CommentsService {

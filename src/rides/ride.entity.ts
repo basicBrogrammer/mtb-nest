@@ -10,9 +10,9 @@ import {
   OneToMany,
   Index
 } from 'typeorm';
-import { User } from 'src/users/user.entity';
-import { Comment } from 'src/comments/comment.entity';
-import { Participation } from 'src/participation/participation.entity';
+import { User } from '../users/user.entity';
+import { Comment } from '../comments/comment.entity';
+import { Participation } from '../participation/participation.entity';
 
 @Entity('rides')
 // @Index(['latitude', 'longitude'])

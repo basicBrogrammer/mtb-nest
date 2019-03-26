@@ -1,12 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { TrailsService } from 'src/trails/trails.service';
+import { TrailsService } from '../trails/trails.service';
 import { Ride } from './ride.entity';
 import { CreateRide } from './dto/create-rides.dto';
-import { User } from 'src/users/user.entity';
-import { Participation } from 'src/participation/participation.entity';
+import { User } from '../users/user.entity';
+import { Participation } from '../participation/participation.entity';
 import { In, Repository, MoreThanOrEqual } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GeocodeService } from 'src/geocode/geocode.service';
+import { GeocodeService } from '../geocode/geocode.service';
 
 @Injectable()
 export class RidesService {

@@ -7,24 +7,21 @@ import {
   CreateDateColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Ride } from 'src/rides/ride.entity';
-import { Comment } from 'src/comments/comment.entity';
-import { Participation } from 'src/participation/participation.entity';
-import { Notification } from 'src/notifications/notification.entity';
+import { Ride } from '../rides/ride.entity';
+import { Comment } from '../comments/comment.entity';
+import { Participation } from '../participation/participation.entity';
+import { Notification } from '../notifications/notification.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn() id: number;
 
   @Column('varchar', { unique: true })
   email: string;
 
-  @Column()
-  password: string;
+  @Column() password: string;
 
-  @Column()
-  name: string;
+  @Column() name: string;
 
   @OneToMany((type) => Ride, (ride) => ride.user)
   rides: Promise<Ride[]>;
@@ -38,9 +35,7 @@ export class User extends BaseEntity {
   @OneToMany((type) => Participation, (participation) => participation.ride)
   participations: Promise<Participation[]>;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @CreateDateColumn() createdAt: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @UpdateDateColumn() updatedAt: Date;
 }
