@@ -14,6 +14,11 @@ import { User } from '../users/user.entity';
 import { Comment } from '../comments/comment.entity';
 import { Participation } from '../participation/participation.entity';
 
+interface LocationObject {
+  type: string;
+  coordinates: Array<number>;
+}
+
 @Entity('rides')
 // @Index(['latitude', 'longitude'])
 export class Ride extends BaseEntity {
@@ -28,7 +33,7 @@ export class Ride extends BaseEntity {
     srid: 4326
   })
   @Index({ spatial: true })
-  location: object;
+  location: LocationObject;
 
   @Column({ type: 'date' })
   date: Date;

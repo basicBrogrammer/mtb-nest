@@ -5,7 +5,12 @@ import { Repository, getRepository, getConnection } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Ride } from 'src/rides/ride.entity';
 import { Participation } from 'src/participation/participation.entity';
-import { rideDefaults, userDefaults, typeormTestConfig } from 'src/tests/db-helpers';
+import {
+  rideDefaults,
+  userDefaults,
+  typeormTestConfig,
+  boulderLocation
+} from 'src/tests/db-helpers';
 import { NotificationsModule } from './notifications.module';
 import { Notification } from './notification.entity';
 import { Comment } from 'src/comments/comment.entity';
@@ -180,12 +185,26 @@ describe('NotificationsService', () => {
     });
   });
 
-  describe.skip('#rideCreated', () => {
+  describe('#rideCreated', () => {
     let user: User;
     let ride: Ride;
+    let otherUserNearBy: User;
+    let nearByUser: User;
+    let userFarAway: User;
     beforeEach(async () => {
       return new Promise(async (fullfill, reject) => {
         user = await userRepo.create(userDefaults).save();
+        nearByUser = await userRepo.create({ ...userDefaults, email: 'nearby@email.com' }).save();
+        otherUserNearBy = await userRepo
+          .create({ ...userDefaults, email: 'otheruser@email.com' })
+          .save();
+        userFarAway = await userRepo
+          .create({
+            ...userDefaults,
+            email: 'farway@email.com',
+            location: boulderLocation
+          })
+          .save();
 
         ride = await rideRepo.create(rideDefaults);
         ride.user = user;
@@ -194,7 +213,30 @@ describe('NotificationsService', () => {
       });
     });
     it('should return rides for a specific user', async () => {
-      expect(service).toBeDefined();
+      expect(notificationRepo.find()).resolves.toHaveLength(0);
+      expect(nearByUser.notifications).resolves.toHaveLength(0);
+      expect(otherUserNearBy.notifications).resolves.toHaveLength(0);
+
+      await service.rideCreated(ride);
+
+      expect(notificationRepo.find()).resolves.toHaveLength(2);
+
+      const checkUserNotifications = async (targetUser) => {
+        targetUser = await userRepo.findOne(targetUser.id);
+        return targetUser.notifications.then((notifications) => {
+          expect(notifications).toHaveLength(1);
+          expect(notifications[0].body).toEqual(
+            `<b>${ride.user.name}</b> created a new ride near you.`
+          );
+          return notifications;
+        });
+      };
+
+      await checkUserNotifications(nearByUser);
+      await checkUserNotifications(otherUserNearBy);
+
+      userFarAway = await userRepo.findOne(userFarAway.id);
+      expect(userFarAway.notifications).resolves.toHaveLength(0);
     });
   });
 });

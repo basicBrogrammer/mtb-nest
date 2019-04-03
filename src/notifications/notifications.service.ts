@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './notification.entity';
-import { Repository } from 'typeorm';
+import { Repository, getRepository } from 'typeorm';
 import { Ride } from '../rides/ride.entity';
 import { User } from '../users/user.entity';
 import { Participation } from '../participation/participation.entity';
@@ -13,8 +13,31 @@ export class NotificationsService {
     @InjectRepository(Notification) private readonly notificationRepo: Repository<Notification>
   ) {}
 
-  async rideCreated(ride: Ride, actor: User): Promise<number> {
-    return 1;
+  async rideCreated(ride: Ride): Promise<any> {
+    const rideOwner = await ride.user;
+
+    const [lat, lng] = ride.location.coordinates;
+    const sql =
+      'user.id != :rideOwnerId and ST_DWithin(user.location, ST_MakePoint(:lat, :lng)::geography, 100000)';
+    const parameters = { lng, lat, rideOwnerId: rideOwner.id };
+    const nearByUsers = await getRepository(User)
+      .createQueryBuilder('user')
+      .where(sql)
+      .setParameters(parameters)
+      .getMany();
+
+    return Promise.all(
+      nearByUsers.map((user) => {
+        return this.notificationRepo
+          .create({
+            actor: rideOwner,
+            ride,
+            user,
+            body: `<b>${rideOwner.name}</b> created a new ride near you.`
+          })
+          .save();
+      })
+    );
   }
 
   async markAsRead(user: User): Promise<any> {

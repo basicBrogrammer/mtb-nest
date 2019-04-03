@@ -1,4 +1,10 @@
 const [date, time] = new Date().toISOString().split('T');
+
+export const boulderLocation = {
+  type: 'Point',
+  coordinates: [40.0155, -105.3422]
+};
+
 export const rideDefaults = {
   trailId: '7042687',
   date,
@@ -8,6 +14,7 @@ export const rideDefaults = {
     coordinates: [35.5951, -82.5515]
   }
 };
+
 export const userDefaults = {
   email: 'bob@email.com',
   password: 'password',
