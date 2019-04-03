@@ -7,6 +7,7 @@ import { Participation } from '../participation/participation.entity';
 import { In, Repository, MoreThanOrEqual } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GeocodeService } from '../geocode/geocode.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class RidesService {
@@ -14,6 +15,7 @@ export class RidesService {
   constructor(
     @InjectRepository(Ride) private readonly rideRepo: Repository<Ride>,
     private trailsService: TrailsService,
+    private notificationService: NotificationsService,
     private geocode: GeocodeService
   ) {
     this.perPage = 25;
@@ -55,14 +57,18 @@ export class RidesService {
   async createRide(rideData: CreateRide): Promise<Ride> {
     const time = rideData.time.toISOString().split('T')[1];
     const ride = this.rideRepo.create({ ...rideData, time });
-    const trail = await this.trailsService.getById(rideData.trailId);
 
+    const trail = await this.trailsService.getById(rideData.trailId);
     const { lat, lng } = await this.geocode.getLatAndLong(trail.location);
     ride.location = {
       type: 'Point',
       coordinates: [lat, lng]
     };
-    return ride.save();
+
+    return ride.save().then((ride) => {
+      this.notificationService.rideCreated(ride);
+      return ride;
+    });
   }
 
   async updateRide(id: number, rideData: CreateRide): Promise<Ride> {
