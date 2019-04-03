@@ -112,9 +112,9 @@ describe('ParticipationService', () => {
   describe('#reject', () => {
     beforeEach(async () => {
       return new Promise(async (fullfill, reject) => {
-        const userRepo = getRepository(User);
-        const rideRepo = getRepository(Ride);
-        const participationRepo = getRepository(Participation);
+        userRepo = getRepository(User);
+        rideRepo = getRepository(Ride);
+        participationRepo = getRepository(Participation);
 
         owner = await userRepo.create(userDefaults).save();
 

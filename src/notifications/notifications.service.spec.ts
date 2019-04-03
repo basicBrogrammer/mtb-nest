@@ -132,7 +132,7 @@ describe('NotificationsService', () => {
   });
 
   describe('#commentCreated', () => {
-    //it.skip('should notify the ride ride owner without participants');
+    // it.skip('should notify the ride ride owner without participants');
     it('should notify the ride owner and participants of the comment', async () => {
       const rideOwner = await userRepo.create(userDefaults).save(),
         commenter = await userRepo.create({ ...userDefaults, email: 'commenter@email.com' }).save(),

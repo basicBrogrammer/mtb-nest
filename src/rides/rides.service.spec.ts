@@ -94,12 +94,14 @@ describe('RidesService', () => {
         user = await userRepo.create(userDefaults).save();
 
         ride = await rideRepo.create(rideDefaults);
+        ride.location = rideDefaults.location;
         ride.user = user;
         // returns a Promise
         await ride.save();
         fullfill();
       });
     });
+
     it('should return rides for a specific user', async () => {
       const results = await service.getRidesForUser(user);
       expect(results).toHaveLength(1);

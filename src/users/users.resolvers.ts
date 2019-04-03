@@ -1,14 +1,17 @@
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
+import fetch from 'node-fetch';
 import { Mutation, Query, Resolver, Args, Context } from '@nestjs/graphql';
-import { User } from './user.entity';
 import { UseGuards, Logger } from '@nestjs/common';
 import { GqlAuthGuard } from '../gql-authguard.decorator';
 import { AuthService } from '../auth/auth.service';
+import { UsersService } from '../users/users.service';
+import { User } from './user.entity';
 
 @Resolver('User')
 export class UsersResolvers {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private usersService: UsersService) {}
+
   @Query('users')
   @UseGuards(GqlAuthGuard)
   async getUsers() {
@@ -41,11 +44,13 @@ export class UsersResolvers {
     @Args('name') name: string,
     @Context('req') req: any
   ) {
-    Logger.log(`Let's see what the ip is ${req.ip}`);
-
-    Logger.log(`Let's see what the ip is ${req.connection.remoteAddress}`);
     password = await bcrypt.hash(password, 10);
-    const user = await User.create({ email, name, password }).save();
+    let user = await User.create({ email, name, password });
+
+    const ipAddress = await this.usersService.getIpAddress(req);
+    user.location = await this.usersService.geoIpAddress(ipAddress);
+
+    user = await user.save();
 
     return {
       token: this.authService.getToken(user),

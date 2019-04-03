@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
 
-const googleMapsClient = require('@google/maps').createClient({
-  key: process.env.GOOGLE_MAPS_KEY,
-  Promise
-});
+import googleMaps = require('@google/maps');
+const googleMapsClient = googleMaps.createClient({ key: process.env.GOOGLE_MAPS_KEY, Promise });
 
 @Injectable()
 export class GeocodeService {

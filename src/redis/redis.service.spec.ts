@@ -3,10 +3,10 @@ import { RedisService } from './redis.service';
 
 describe('RedisService', () => {
   let service: RedisService;
-  
+
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RedisService],
+      providers: [RedisService]
     }).compile();
     service = module.get<RedisService>(RedisService);
   });

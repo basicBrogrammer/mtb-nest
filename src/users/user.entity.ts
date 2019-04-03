@@ -5,7 +5,8 @@ import {
   BaseEntity,
   OneToMany,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  Index
 } from 'typeorm';
 import { Ride } from '../rides/ride.entity';
 import { Comment } from '../comments/comment.entity';
@@ -22,6 +23,13 @@ export class User extends BaseEntity {
   @Column() password: string;
 
   @Column() name: string;
+
+  @Column('geography', {
+    spatialFeatureType: 'Point',
+    srid: 4326
+  })
+  @Index({ spatial: true })
+  location: object;
 
   @OneToMany((type) => Ride, (ride) => ride.user)
   rides: Promise<Ride[]>;

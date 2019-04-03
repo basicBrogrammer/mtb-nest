@@ -11,7 +11,11 @@ export const rideDefaults = {
 export const userDefaults = {
   email: 'bob@email.com',
   password: 'password',
-  name: 'Bob'
+  name: 'Bob',
+  location: {
+    type: 'Point',
+    coordinates: [35.5951, -82.5515]
+  }
 };
 export const nextTick = () => new Promise((res) => process.nextTick(res));
 

@@ -10,7 +10,8 @@
         "eofline": false,
         "quotemark": [
             true,
-            "single"
+            "single",
+            "avoid-escape"
         ],
         "indent": false,
         "member-access": [
