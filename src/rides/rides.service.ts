@@ -7,7 +7,7 @@ import { Participation } from '../participation/participation.entity';
 import { In, Repository, MoreThanOrEqual } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GeocodeService } from '../geocode/geocode.service';
-import { NotificationsService } from 'src/notifications/notifications.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class RidesService {
